@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .search-container {
+            margin: 20px 0;
+        }
+
+        #search-input {
+            padding: 10px;
+            width: 60%;
+            font-size: 16px;
+        }
+
+        #search-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body style="background-color:rgb(0, 255, 140);">
+    <div class="container">
+        <h2>Welcome to your Dashboard, <%= username %>!</h2>
+        <p>Login successful!</p>
+
+        <!-- Search bar and button -->
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search for images...">
+            <button id="search-button">Search</button>
+        </div>
+
+        <!-- Container for displaying images -->
+        <div id="image-container" class="image-container"></div>
+    </div>
+
+    <!-- Include JavaScript -->
+    <script>
+        document.getElementById('search-button').addEventListener('click', () => {
+            const query = document.getElementById('search-input').value;
+            if (query) {
+                fetchImages(query);
+            }
+        });
+
+        async function fetchImages(query) {
+            const apiKey = '44269602-d7340a9c5f215033bea8adaec'; // Replace with your Pixabay API key
+            const url =` https://pixabay.com/api/?key=${apiKey}&q=${encodeURIComponent(query)}&image_type=photo`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                displayImages(data.hits);
+            } catch (error) {
+                console.error('Error fetching images:', error);
+            }
+        }
+
+        function displayImages(images) {
+            const imageContainer = document.getElementById('image-container');
+            imageContainer.innerHTML = ''; // Clear previous images
+            images.forEach(image => {
+                const imgElement = document.createElement('img');
+                imgElement.src = image.webformatURL;
+                imgElement.alt = image.tags;
+                imageContainer.appendChild(imgElement);
+            });
+        }
+    </script>
+</body>
+</html>
